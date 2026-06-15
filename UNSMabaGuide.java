@@ -14,13 +14,12 @@ class Mahasiswa {
     ArrayList<String> hobi;
     String daerahKost;
     Mahasiswa(String nim, String nama, String asalDaerah, ArrayList<String> hobi, String daerahKost) {
-        this.nim        = nim;
-        this.nama       = nama;
+        this.nim = nim;
+        this.nama = nama;
         this.asalDaerah = asalDaerah;
-        this.hobi       = hobi;
+        this.hobi = hobi;
         this.daerahKost = daerahKost;
     }
-
     @Override
     public String toString() {
         return nama + " (" + nim + ") | Asal: " + asalDaerah + " | Kost: " + daerahKost;
@@ -28,105 +27,76 @@ class Mahasiswa {
 }
 
 class Utils {
-    static String normalisasiDaerah(String asal) {
-        String s = asal.toLowerCase();
-        if (ada(s, "jakarta","bogor","depok","tangerang","bekasi","jabodetabek"))
-            return "Jabodetabek";
-
-        if (ada(s, "jawa timur","jatim","surabaya","malang","sidoarjo","jember",
-                   "madiun","kediri","blitar","mojokerto","pasuruan","probolinggo",
-                   "banyuwangi","tuban","lamongan","gresik","ngawi","ponorogo",
-                   "magetan","trenggalek","lumajang","bondowoso","situbondo"))
-            return "Jawa Timur";
-
-        if (ada(s, "jawa barat","jabar","bandung","cirebon","tasikmalaya",
-                   "sukabumi","garut","cianjur","karawang","purwakarta",
-                   "subang","indramayu","majalengka","kuningan"))
-            return "Jawa Barat";
-
-        if (ada(s, "yogyakarta","jogja","sleman","bantul","gunung kidul",
-                   "gunungkidul","kulon progo","kulonprogo","diy"))
-            return "Yogyakarta (DIY)";
-
-        if (ada(s, "jawa tengah","jateng","semarang","solo","surakarta",
-                   "purwokerto","tegal","pekalongan","magelang","klaten","boyolali",
-                   "wonogiri","karanganyar","salatiga","kudus","jepara","demak",
-                   "purworejo","wonosobo","banyumas","cilacap","brebes","pemalang",
-                   "batang","kendal","temanggung","sragen","blora","rembang","pati",
-                   "grobogan","kebumen","banjarnegara","purbalingga"))
-            return "Jawa Tengah";
-
-        if (ada(s, "kalimantan","kalsel","kaltim","kalbar","kalteng","kaltara",
-                   "banjarmasin","samarinda","pontianak","palangkaraya",
-                   "balikpapan","bontang","tarakan","singkawang","kotabaru"))
-            return "Kalimantan";
-
-        if (ada(s, "sumatera","sumatra","sumsel","sumbar","sumut","medan","padang",
-                   "palembang","lampung","riau","aceh","jambi","bengkulu","bangka",
-                   "belitung","pekanbaru","dumai","batam","tanjungpinang","lubuklinggau"))
-            return "Sumatera";
-
-        if (ada(s, "sulawesi","makassar","manado","palu","kendari",
-                   "gorontalo","mamuju","bitung","palopo","parepare"))
-            return "Sulawesi";
-
-        if (ada(s, "papua","jayapura","manokwari","sorong","merauke","timika","wamena"))
-            return "Papua";
-
-        if (ada(s, "bali","denpasar","singaraja","gianyar","tabanan","badung"))
-            return "Bali";
-
-        if (ada(s, "ntt","nusa tenggara","kupang","mataram","lombok",
-                   "sumbawa","flores","timor","ende","maumere"))
-            return "Nusa Tenggara";
-
-        if (ada(s, "maluku","ambon","ternate","tidore","sofifi"))
-            return "Maluku";
-
-        return asal; // kembalikan apa adanya jika tidak cocok
-    }
-
-    // Cek apakah teks mengandung salah satu kata kunci
-    static boolean ada(String teks, String ...kataKunci) {
+    static boolean wilayah(String teks, String ... kataKunci) {
         for (String k : kataKunci) {
             if (teks.contains(k)) return true;
         }
         return false;
     }
+
+    static String normalisasiDaerah(String provinsiInput) {
+        String s = provinsiInput.toLowerCase().trim();
+        if (wilayah(s, "banten")) 
+            return "Banten";
+        if (wilayah(s, "jakarta", "dki", "dki jakarta")) 
+            return "DKI Jakarta";
+        if (wilayah(s, "jawa timur", "jatim")) 
+            return "Jawa Timur";
+        if (wilayah(s, "jawa barat", "jabar")) 
+            return "Jawa Barat";
+        if (wilayah(s, "yogyakarta", "diy", "diy yogyakarta")) 
+            return "DI Yogyakarta";
+        if (wilayah(s, "jawa tengah", "jateng")) 
+            return "Jawa Tengah";
+        if (wilayah(s, "kalimantan selatan", "kalimantan utara", "kalimantan barat", "kalimantan timur", "kalimantan tengah")) 
+            return "Kalimantan";
+        if (wilayah(s, "sumatera barat", "sumatera utara", "sumatera selatan", "riau", "aceh", "lampung")) 
+            return "Sumatera";
+        if (wilayah(s, "sulawesi selatan", "sulawesi utara", "sulawesi tengah", "sulawesi tenggara", "sulawesi barat")) 
+            return "Sulawesi";
+        if (wilayah(s, "papua","papua barat", "papua selatan", "papua tengah", "papua pegunungan")) 
+            return "Papua";
+        if (wilayah(s, "bali")) 
+            return "Bali";
+        if (wilayah(s, "nusa tenggara timur", "ntt")) 
+            return "Nusa Tenggara Timur";
+        if (wilayah(s, "nusa tenggara barat", "ntb")) 
+            return "Nusa Tenggara Barat";
+        if (wilayah(s, "maluku")) 
+            return "Maluku";
+        return "Wilayah Tidak Dikenal";
+    }
 }
 
 class SocialGraph {
-    private HashMap<String, Mahasiswa>         database;
+    private HashMap<String, Mahasiswa> database;
     private HashMap<String, ArrayList<String>> adjacencyList;
-    private static final double THRESHOLD = 0.25;
-
+    private static final double batas = 0.25;
     SocialGraph() {
         database      = new HashMap<>();
         adjacencyList = new HashMap<>();
     }
-
     void tambahMahasiswa(Mahasiswa mhs) {
         database.put(mhs.nim, mhs);
         adjacencyList.put(mhs.nim, new ArrayList<>());
         for (String nimLain : database.keySet()) {
             if (nimLain.equals(mhs.nim)) continue;
             double skor = hitungSimilarity(mhs, database.get(nimLain));
-            if (skor >= THRESHOLD) {
+            if (skor >= batas) {
                 adjacencyList.get(mhs.nim).add(nimLain);
                 adjacencyList.get(nimLain).add(mhs.nim);
             }
         }
     }
-
     double hitungSimilarity(Mahasiswa a, Mahasiswa b) {
         double skor = 0.0;
 
-        // Cek asal daerah (normalisasi dulu agar "Surabaya" == "Malang" = "Jawa Timur")
+        // Cek asal daerah
         String daerahA = Utils.normalisasiDaerah(a.asalDaerah);
         String daerahB = Utils.normalisasiDaerah(b.asalDaerah);
         if (daerahA.equalsIgnoreCase(daerahB)) skor += 0.40;
 
-        // Cek hobi (cukup satu kesamaan)
+        // Cek hobi 
         boolean hobiSama = false;
         luarLoop:
         for (String hA : a.hobi)
@@ -136,7 +106,6 @@ class SocialGraph {
 
         // Cek daerah kost
         if (a.daerahKost.trim().equalsIgnoreCase(b.daerahKost.trim())) skor += 0.35;
-
         return Math.min(skor, 1.0);
     }
 
@@ -167,10 +136,10 @@ class SocialGraph {
             }
         }
 
-        // Fallback: jika tidak ada koneksi BFS, hitung langsung ke semua
+        // jika tidak ada koneksi BFS, hitung langsung ke semua
         if (hasil.isEmpty()) hasil = fallbackSimilarity(nimUser);
 
-        // Bubble Sort: urutkan dari skor terbesar ke terkecil
+        // mengurutkan dari skor terbesar ke terkecil
         for (int i = 0; i < hasil.size() - 1; i++) {
             for (int j = 0; j < hasil.size() - 1 - i; j++) {
                 double kiri  = Double.parseDouble(hasil.get(j)[2]);
@@ -205,10 +174,10 @@ class SocialGraph {
         if (daerahA.equalsIgnoreCase(daerahB))
             alasan.add("Satu daerah (" + daerahA + ")");
         luarLoop:
-        for (String hA : a.hobi)
-            for (String hB : b.hobi)
-                if (hA.trim().equalsIgnoreCase(hB.trim())) {
-                    alasan.add("Hobi " + hA.trim());
+        for (String hobiA : a.hobi)
+            for (String hobiB : b.hobi)
+                if (hobiA.trim().equalsIgnoreCase(hobiB.trim())) {
+                    alasan.add("Hobi " + hobiA.trim());
                     break luarLoop;
                 }
         if (a.daerahKost.trim().equalsIgnoreCase(b.daerahKost.trim()))
@@ -225,14 +194,13 @@ class SocialGraph {
 
     HashMap<String, Mahasiswa> getDatabase() { return database; }
     Mahasiswa getMahasiswa(String nim) { return database.get(nim); }
-
     void tampilkanInfoGraph() {
         int totalEdge = 0;
         for (ArrayList<String> adj : adjacencyList.values()) totalEdge += adj.size();
-        System.out.println("\n  === INFO GRAPH ===");
-        System.out.println("  Total mahasiswa (node) : " + database.size());
-        System.out.println("  Total koneksi (edge)   : " + (totalEdge / 2));
-        System.out.println("  Threshold koneksi      : " + (int)(THRESHOLD * 100) + "%\n");
+        System.out.println("\n=== Informasi Graph ===");
+        System.out.println("Total mahasiswa (node) : " + database.size());
+        System.out.println("Total koneksi (edge): " + (totalEdge / 2));
+        System.out.println("Threshold koneksi : " + (int)(batas * 100) + "%\n");
     }
 }
 
@@ -246,17 +214,17 @@ class PaguyubanManager {
         this.ketuaPaguyuban = new HashMap<>();
     }
 
-    // UNION: masukkan mahasiswa ke grup daerahnya
+    // masukkan mahasiswa ke grup daerahnya
     void tambahKePaguyuban(Mahasiswa mhs) {
         String paguyuban = Utils.normalisasiDaerah(mhs.asalDaerah);
         if (!grupPaguyuban.containsKey(paguyuban)) {
             grupPaguyuban.put(paguyuban, new ArrayList<>());
-            ketuaPaguyuban.put(paguyuban, mhs.nim); // orang pertama = ketua
+            ketuaPaguyuban.put(paguyuban, mhs.nim);
         }
         grupPaguyuban.get(paguyuban).add(mhs.nim);
     }
 
-    // FIND: cari mahasiswa ini ada di paguyuban mana
+    // cari mahasiswa dlam paguyuban
     String cariPaguyuban(String nimUser) {
         for (Map.Entry<String, ArrayList<String>> entry : grupPaguyuban.entrySet())
             if (entry.getValue().contains(nimUser)) return entry.getKey();
@@ -265,31 +233,27 @@ class PaguyubanManager {
 
     void tampilkanInfoPaguyuban(String nimUser) {
         String namaPaguyuban = cariPaguyuban(nimUser);
-        if (namaPaguyuban == null) { System.out.println("  [!] Paguyuban tidak ditemukan."); return; }
-        ArrayList<String> anggota  = grupPaguyuban.get(namaPaguyuban);
-        Mahasiswa ketua            = database.get(ketuaPaguyuban.get(namaPaguyuban));
-        String namaKetua           = (ketua != null) ? ketua.nama : "Belum ditentukan";
+        if (namaPaguyuban == null) { System.out.println("Paguyuban tidak ditemukan Bro"); return; }
+        ArrayList<String> anggota = grupPaguyuban.get(namaPaguyuban);
+        Mahasiswa ketua = database.get(ketuaPaguyuban.get(namaPaguyuban));
+        String namaKetua = (ketua != null) ? ketua.nama : "Belum ditentukan";
         System.out.println();
         garis('=', 50);
-        System.out.println("  PAGUYUBAN DAERAHMU");
+        System.out.println("PAGUYUBAN DAERAHMU");
         garis('-', 50);
-        System.out.println("  Nama    : Paguyuban " + namaPaguyuban);
-        System.out.println("  Ketua   : " + namaKetua);
-        System.out.println("  Anggota : " + anggota.size() + " mahasiswa");
+        System.out.println("Nama    : Paguyuban " + namaPaguyuban);
+        System.out.println("Ketua   : " + namaKetua);
+        System.out.println("Anggota : " + anggota.size() + " mahasiswa");
         garis('-', 50);
-        System.out.println("  Daftar Anggota:");
+        System.out.println("Daftar Anggota:");
 
         int no = 1;
         for (String nim : anggota) {
             Mahasiswa m = database.get(nim);
             if (m == null) continue;
-            String marker = nim.equals(nimUser) ? "  <-- KAMU" : "";
+            String marker = nim.equals(nimUser) ? "   " : "";
             System.out.println("  " + no++ + ". " + m.nama + " - " + m.asalDaerah + marker);
         }
-
-        garis('=', 50);
-        System.out.println("  Ketua paguyuban siap membantu adaptasi!");
-        System.out.println("  Cari tumpangan pulang kampung bareng :)");
         garis('=', 50);
         System.out.println();
     }
@@ -297,19 +261,19 @@ class PaguyubanManager {
     void tampilkanSemuaPaguyuban() {
         System.out.println();
         garis('=', 50);
-        System.out.println("  DAFTAR SEMUA PAGUYUBAN");
+        System.out.println("Daftar Semua Paguyuban");
         garis('=', 50);
 
         if (grupPaguyuban.isEmpty()) {
-            System.out.println("  Belum ada paguyuban terbentuk.");
+            System.out.println("Belum ada paguyuban terbentuk.");
         } else {
             int no = 1;
             for (Map.Entry<String, ArrayList<String>> e : grupPaguyuban.entrySet()) {
                 Mahasiswa ketua  = database.get(ketuaPaguyuban.get(e.getKey()));
                 String namaKetua = (ketua != null) ? ketua.nama : "?";
-                System.out.println("  " + no++ + ". Paguyuban " + e.getKey());
-                System.out.println("     Ketua   : " + namaKetua);
-                System.out.println("     Anggota : " + e.getValue().size() + " mahasiswa");
+                System.out.println("" + no++ + ". Paguyuban " + e.getKey());
+                System.out.println("Ketua   : " + namaKetua);
+                System.out.println("Anggota : " + e.getValue().size() + " mahasiswa");
                 garis('-', 50);
             }
         }
@@ -317,7 +281,7 @@ class PaguyubanManager {
     }
 
     private void garis(char c, int n) {
-        StringBuilder sb = new StringBuilder("  ");
+        StringBuilder sb = new StringBuilder("");
         for (int i = 0; i < n; i++) sb.append(c);
         System.out.println(sb);
     }
@@ -331,19 +295,17 @@ public class UNSMabaGuide {
     public static void main(String[] args) {
         graph     = new SocialGraph();
         paguyuban = new PaguyubanManager(graph.getDatabase());
-
         muatSeedData();
-
         System.out.println();
-        garis('*', 50);
-        System.out.println("*      UNS MABA-GUIDE - Selamat Datang!       *");
-        System.out.println("*  Sistem Adaptasi Mahasiswa Baru UNS Solo    *");
-        garis('*', 50);
+        garis('-', 47);
+        System.out.println("|      UNS MABA-GUIDE - Selamat Datang!       |");
+        System.out.println("|  Sistem Adaptasi Mahasiswa Baru UNS Solo    |");
+        garis('-', 47);
 
         boolean jalan = true;
         while (jalan) {
             tampilMenu();
-            switch (bacaInt("  Pilihan kamu (1-5): ")) {
+            switch (bacaInt("Pilihan kamu (1-5): ")) {
                 case 1: 
                     menuDaftar();
                     break;
@@ -357,17 +319,36 @@ public class UNSMabaGuide {
                     break;
                 case 5:
                     jalan = false;
-                    System.out.println("\n  Terima kasih! Semangat beradaptasi di UNS!\n");
+                    System.out.println("\nTerima kasih! Semangat beradaptasi di UNS!\n");
                     break;
                 default:
-                    System.out.println("\n  [!] Pilihan tidak valid (1-5).\n");
+                    System.out.println("\nPilihan tidak valid (1-5).\n");
             }
         }
         sc.close();
     }
 
+    static void clearTerminal() {
+        try {
+            String os = System.getProperty("os.name").toLowerCase();
+            if (os.contains("win")) {
+                new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
+            } else {
+                new ProcessBuilder("clear").inheritIO().start().waitFor();
+            }
+        } catch (Exception e) {
+            System.out.println("Gagal Clear Terminal!");
+        }
+    }
+
+    static void lanjut() {
+        System.out.print("\nTekan ENTER untuk lanjut...");
+        sc.nextLine();
+    }
+
     static void tampilMenu() {
         System.out.println();
+        clearTerminal();
         garis('=', 50);
         System.out.println("MENU UTAMA - UNS MABA-GUIDE");
         garis('=', 50);
@@ -378,108 +359,146 @@ public class UNSMabaGuide {
         System.out.println("5. Keluar");
         garis('-', 50);
     }
+    
+    static String NIM() {
+        while (true) {
+            System.out.print("NIM : ");
+            String nim = sc.nextLine().trim();
+            if (!nim.isEmpty() && nim.matches("^[a-zA-Z0-9]+$")) {
+                return nim;
+            }
+            System.out.println(nim.isEmpty() ? "NIM tidak boleh kosong!" : "NIM hanya boleh huruf dan angka (tanpa simbol/spasi)!");
+        }
+    }
+
+    static String Nama() {
+        while (true) {
+            System.out.print("Nama : ");
+            String nama = sc.nextLine().trim();
+            if (!nama.isEmpty() && nama.matches("[a-zA-Z\\s]+")) return nama;
+            System.out.println(nama.isEmpty() ? "Nama tidak boleh kosong!" : "Nama hanya boleh huruf!");
+        }
+    }
+
+    static String Daerah() {
+        while (true) {
+            System.out.print("Asal Daerah (Contoh: Kota, Provinsi = Serang, Banten) : ");
+            String daerah = sc.nextLine().trim();
+            String[] asalDaerah = daerah.split(",");
+            String provinsi = asalDaerah[1].trim();
+            String wilayah = Utils.normalisasiDaerah(provinsi);
+            if (wilayah.equals("Wilayah Tidak Dikenal")) {
+                System.out.println("Asal Daerah tidak dikenali! Pastikan format benar dan provinsi termasuk dalam daftar wilayah Indonesia.");
+                continue;
+            }
+            if (!daerah.isEmpty() && daerah.matches("[a-zA-Z\\s,]+")) {
+                if (daerah.contains(",")) {
+                    return daerah;
+                }
+                System.out.println("Format salah! Harus menyertakan koma (Contoh: Serang, Banten)");
+                continue;
+            }
+            System.out.println(daerah.isEmpty() ? "Asal Daerah tidak boleh kosong!" : "Asal Daerah hanya boleh huruf dan koma!");
+        }
+    }
+
+    static String Kost() {
+        while (true) {
+            System.out.print("Daerah Kost (Contoh: Jebres / Asrama UNS) : ");
+            String kost = sc.nextLine().trim();
+            if (!kost.isEmpty() && kost.matches("[a-zA-Z\\s]+")) return kost;
+            System.out.println(kost.isEmpty() ? "Daerah Kost tidak boleh kosong!" : "Daerah Kost hanya boleh huruf!");
+        }
+    }
 
     static void menuDaftar() {
         System.out.println();
         garis('=', 50);
-        System.out.println("  PENDAFTARAN MAHASISWA BARU");
+        System.out.println("Pendaftaran Mahasiswa Baru");
         garis('=', 50);
 
-        System.out.print("  NIM         : ");
-        String nim = sc.nextLine().trim();
+        String nim = NIM();
         if (graph.getMahasiswa(nim) != null) {
-            System.out.println("\n  [!] NIM " + nim + " sudah terdaftar!\n");
+            System.out.println("NIM " + nim + " sudah terdaftar!");
+            lanjut();
             return;
         }
-
-        System.out.print("  Nama        : ");
-        String nama = sc.nextLine().trim();
-
-        System.out.println("  Asal Daerah (contoh: Surabaya / Jakarta / Bandung)");
-        System.out.print("              : ");
-        String asal = sc.nextLine().trim();
-
-        System.out.println("  Hobi (Contoh: Basket, Gaming, Musik)");
-        System.out.print("              : ");
+        String nama = Nama();
+        String asal = Daerah();
+        String kost = Kost();
+        System.out.println("Hobi (Contoh: Basket, Gaming, Musik) : ");
         ArrayList<String> hobi = new ArrayList<>();
         for (String h : sc.nextLine().split(","))
             if (!h.trim().isEmpty()) hobi.add(h.trim());
 
-        System.out.println("  Daerah Kost (Contoh: Kentingan / Jebres / Asrama UNS)");
-        System.out.print("              : ");
-        String kost = sc.nextLine().trim();
-
         Mahasiswa mhs = new Mahasiswa(nim, nama, asal, hobi, kost);
         graph.tambahMahasiswa(mhs);
         paguyuban.tambahKePaguyuban(mhs);
-
-        System.out.println("\n  [OK] Selamat Datang di UNS, " + nama + "!\n");
-
+        System.out.println("\nSelamat Datang di UNS, " + nama);
         tampilRekomendasi(nim);
         paguyuban.tampilkanInfoPaguyuban(nim);
+        lanjut();
     }
 
     static void menuCariTeman() {
         System.out.println();
         garis('-', 50);
-        System.out.print("  Masukkan NIM kamu: ");
+        System.out.print("Masukkan NIM: ");
         String nim = sc.nextLine().trim();
-
         Mahasiswa mhs = graph.getMahasiswa(nim);
         if (mhs == null) {
-            System.out.println("  [!] NIM tidak ditemukan. Silakan daftar dulu (Menu 1).\n");
+            System.out.println("NIM tidak ditemukan, Silakan Daftar Terlebih Dahulu\n");
             return;
         }
 
-        System.out.println("  Halo, " + mhs.nama + "! Berikut rekomendasi untukmu:\n");
+        System.out.println("  Halo, " + mhs.nama + " Berikut Rekomendasi Teman :\n");
         tampilRekomendasi(nim);
         paguyuban.tampilkanInfoPaguyuban(nim);
+        lanjut();
     }
 
     static void tampilRekomendasi(String nim) {
         ArrayList<String[]> list = graph.rekomendasiTeman(nim, 5);
-
         System.out.println();
         garis('=', 50);
-        System.out.println("  REKOMENDASI TEMAN (Top 5)");
+        System.out.println("Rekomendasi Teman (Top 5)");
         garis('=', 50);
 
         if (list.isEmpty()) {
-            System.out.println("  Belum ada rekomendasi. Tunggu maba lain mendaftar!");
+            System.out.println("Belum ada rekomendasi");
         } else {
             int no = 1;
             for (String[] r : list) {
                 Mahasiswa m = graph.getMahasiswa(r[0]);
                 int persen  = (int)(Double.parseDouble(r[2]) * 100);
-                System.out.println("  " + no++ + ". " + m.nama);
-                System.out.println("     Asal   : " + m.asalDaerah);
-                System.out.println("     Kost   : " + m.daerahKost);
-                System.out.println("     Alasan : " + r[1]);
-                System.out.println("     Cocok  : " + persen + "%");
+                System.out.println("" + no++ + ". " + m.nama);
+                System.out.println("Asal   : " + m.asalDaerah);
+                System.out.println("Kost   : " + m.daerahKost);
+                System.out.println("Alasan : " + r[1]);
+                System.out.println("Cocok  : " + persen + "%");
                 garis('-', 50);
             }
         }
         System.out.println();
+        lanjut();
     }
 
     static void muatSeedData() {
-        System.out.println("\n  Loading data mahasiswa UNS...");
-        seed("L0225001", "Eko Prasetyo", "Surabaya", "Kentingan", "Basket","Gaming");
-        seed("L0225002", "Rina Aulia", "Malang", "Kentingan", "Gaming","Memasak");
-        seed("L0225003", "Dimas Putra", "Jember", "Jebres",    "Basket","Musik");
-        seed("L0225004", "Sari Dewi", "Bandung", "Kentingan", "Melukis","Musik");
-        seed("L0225005", "Hendra Kusuma", "Banjarmasin", "Asrama UNS",   "Futsal","Gaming");
-        seed("L0225006", "Dina Pratiwi", "Jakarta", "Jebres",    "Menyanyi","Tari");
-        seed("L0225007", "Rizky Ramadhan", "Bekasi", "Jebres",    "Gaming","Futsal");
-        seed("L0225008", "Maya Salsabila", "Depok", "Kentingan", "Menyanyi","Memasak");
-        seed("L0225009", "Agus Santoso", "Sidoarjo", "Asrama UNS",   "Basket","Futsal");
-        seed("L0225010", "Putri Rahayu", "Yogyakarta", "Kentingan", "Melukis","Membaca");
-        seed("L0225011", "Farhan Maulana", "Medan", "Jebres",    "Futsal","Musik");
-        seed("L0225012", "Dewi Anggraini", "Padang", "Asrama UNS",   "Memasak","Menyanyi");
-        seed("L0225013", "Bagas Aditya", "Kediri", "Jebres",    "Gaming","Futsal");
-        seed("L0225014", "Sinta Wulandari", "Makassar", "Asrama UNS",   "Menyanyi","Tari");
-        seed("L0225015", "Andre Wijaya", "Pontianak", "Kentingan", "Gaming","Basket");
-        System.out.println("  [OK] 15 data mahasiswa berhasil dimuat!\n");
+        seed("L0225001", "Eko Prasetyo", "Surabaya, Jawa Timur", "Kentingan", "Basket","Gaming");
+        seed("L0225002", "Rina Aulia", "Malang, Jawa Timur", "Kentingan", "Gaming","Memasak");
+        seed("L0225003", "Dimas Putra", "Jember, Jawa Timur", "Jebres",    "Basket","Musik");
+        seed("L0225004", "Sari Dewi", "Bandung, Jawa Barat", "Kentingan", "Melukis","Musik");
+        seed("L0225005", "Hendra Kusuma", "Banjarmasin, Kalimantan Selatan", "Asrama UNS",   "Futsal","Gaming");
+        seed("L0225006", "Dina Pratiwi", "Jakarta, DKI Jakarta", "Jebres",    "Menyanyi","Tari");
+        seed("L0225007", "Rizky Ramadhan", "Bekasi, Jawa Barat", "Jebres",    "Gaming","Futsal");
+        seed("L0225008", "Maya Salsabila", "Depok, Jawa Barat", "Kentingan", "Menyanyi","Memasak");
+        seed("L0225009", "Agus Santoso", "Sidoarjo, Jawa Timur", "Asrama UNS",   "Basket","Futsal");
+        seed("L0225010", "Putri Rahayu", "Yogyakarta, Daerah Istimewa Yogyakarta", "Kentingan", "Melukis","Membaca");
+        seed("L0225011", "Farhan Maulana", "Medan, Sumatera Utara", "Jebres",    "Futsal","Musik");
+        seed("L0225012", "Dewi Anggraini", "Padang, Sumatera Barat", "Asrama UNS",   "Memasak","Menyanyi");
+        seed("L0225013", "Bagas Aditya", "Kediri, Jawa Timur", "Jebres",    "Gaming","Futsal");
+        seed("L0225014", "Sinta Wulandari", "Makassar, Sulawesi Selatan", "Asrama UNS",   "Menyanyi","Tari");
+        seed("L0225015", "Andre Wijaya", "Pontianak, Kalimantan Barat", "Kentingan", "Gaming","Basket");
     }
 
     static void seed(String nim, String nama, String asal, String kost, String... hobiArr) {
@@ -495,7 +514,7 @@ public class UNSMabaGuide {
     }
 
     static void garis(char c, int n) {
-        StringBuilder sb = new StringBuilder("  ");
+        StringBuilder sb = new StringBuilder("");
         for (int i = 0; i < n; i++) sb.append(c);
         System.out.println(sb);
     }
