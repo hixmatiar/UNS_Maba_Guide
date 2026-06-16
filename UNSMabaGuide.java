@@ -474,26 +474,33 @@ public class UNSMabaGuide {
     static void muatSeedData() {
         String namaFile = "SDA_PROJECT/DataMahasiswa.csv";
         try {
-            File file = new File(namaFile);
+            java.io.File file = new java.io.File(namaFile);
             Scanner fileScanner = new Scanner(file);
+            boolean barisPertama = true; 
+            
             while (fileScanner.hasNextLine()) {
                 String baris = fileScanner.nextLine().trim();
-                String[] data = baris.split(",");
+                if (barisPertama) {
+                    barisPertama = false;
+                    continue;
+                }
+                String[] data = baris.split("\\s*,\\s*"); 
+                
                 if (data.length >= 5) {
-                    String nim = data[0].trim();
-                    String nama = data[1].trim();
-                    String asal = data[2].trim() + ", " + data[3].trim();
-                    String kost = data[4].trim();
+                    String nim = data[0];
+                    String nama = data[1];
+                    String asal = data[2] + ", " + data[3];
+                    String kost = data[4];
                     ArrayList<String> hobiList = new ArrayList<>();
                     for (int i = 5; i < data.length; i++) {
-                        hobiList.add(data[i].trim());
+                        hobiList.add(data[i]);
                     }
                     seed(nim, nama, asal, kost, hobiList.toArray(new String[0]));
                 }
             }
             fileScanner.close();
-        } catch (FileNotFoundException e) {
-            System.out.println("File '" + namaFile + "' Tidak Ditemukan!");
+        } catch (java.io.FileNotFoundException e) {
+            System.out.println("File " + namaFile + " tidak ditemukan");
         }
     }
 
