@@ -1,3 +1,5 @@
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -346,7 +348,7 @@ public class UNSMabaGuide {
         System.out.println("2. Cari Rekomendasi Teman");
         System.out.println("3. Lihat Semua Paguyuban");
         System.out.println("0. Keluar");
-        garis('-', 50);
+        garis('=', 50);
     }
     
     static String NIM() {
@@ -470,23 +472,29 @@ public class UNSMabaGuide {
     }
 
     static void muatSeedData() {
-        seed("L0225001", "Eko Prasetyo", "Surabaya, Jawa Timur", "Kentingan", "Basket","Gaming");
-        seed("L0225002", "Rina Aulia", "Malang, Jawa Timur", "Kentingan", "Gaming","Memasak");
-        seed("L0225003", "Dimas Putra", "Jember, Jawa Timur", "Jebres",    "Basket","Musik");
-        seed("L0225004", "Sari Dewi", "Bandung, Jawa Barat", "Kentingan", "Melukis","Musik");
-        seed("L0225005", "Hendra Kusuma", "Banjarmasin, Kalimantan Selatan", "Asrama UNS",   "Futsal","Gaming");
-        seed("L0225006", "Dina Pratiwi", "Jakarta, DKI Jakarta", "Jebres",    "Menyanyi","Tari");
-        seed("L0225007", "Rizky Ramadhan", "Bekasi, Jawa Barat", "Jebres",    "Gaming","Futsal");
-        seed("L0225008", "Maya Salsabila", "Depok, Jawa Barat", "Kentingan", "Menyanyi","Memasak");
-        seed("L0225009", "Agus Santoso", "Sidoarjo, Jawa Timur", "Asrama UNS",   "Basket","Futsal");
-        seed("L0225010", "Putri Rahayu", "Yogyakarta, Daerah Istimewa Yogyakarta", "Kentingan", "Melukis","Membaca");
-        seed("L0225011", "Farhan Maulana", "Medan, Sumatera Utara", "Jebres",    "Futsal","Musik");
-        seed("L0225012", "Dewi Anggraini", "Padang, Sumatera Barat", "Asrama UNS",   "Memasak","Menyanyi");
-        seed("L0225013", "Bagas Aditya", "Kediri, Jawa Timur", "Jebres",    "Gaming","Futsal");
-        seed("L0225014", "Sinta Wulandari", "Makassar, Sulawesi Selatan", "Asrama UNS",   "Menyanyi","Tari");
-        seed("L0225015", "Andre Wijaya", "Pontianak, Kalimantan Barat", "Kentingan", "Gaming","Basket");
-        seed("L0225016", "Lina Permata", "Pandeglang, Banten", "Jebres", "Melukis","Membaca");
-
+        String namaFile = "SDA_PROJECT/DataMahasiswa.csv";
+        try {
+            File file = new File(namaFile);
+            Scanner fileScanner = new Scanner(file);
+            while (fileScanner.hasNextLine()) {
+                String baris = fileScanner.nextLine().trim();
+                String[] data = baris.split(",");
+                if (data.length >= 5) {
+                    String nim = data[0].trim();
+                    String nama = data[1].trim();
+                    String asal = data[2].trim() + ", " + data[3].trim();
+                    String kost = data[4].trim();
+                    ArrayList<String> hobiList = new ArrayList<>();
+                    for (int i = 5; i < data.length; i++) {
+                        hobiList.add(data[i].trim());
+                    }
+                    seed(nim, nama, asal, kost, hobiList.toArray(new String[0]));
+                }
+            }
+            fileScanner.close();
+        } catch (FileNotFoundException e) {
+            System.out.println("File '" + namaFile + "' Tidak Ditemukan!");
+        }
     }
 
     static void seed(String nim, String nama, String asal, String kost, String... hobiArr) {
