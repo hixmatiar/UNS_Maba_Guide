@@ -515,7 +515,7 @@ public class UNSMabaGuide {
     }
 
     static void simpanKeCSV(String nim, String nama, String asal, String kost, ArrayList<String> hobi) {
-        String namaFile = "SDA_PROJECT/DataMahasiswa.csv";
+        String namaFile = "UNS_MABA_GUIDE/DataMahasiswa.csv";
         try {
             java.io.File file = new java.io.File(namaFile);
             boolean fileAdaIsinya = file.exists() && file.length() > 0;
