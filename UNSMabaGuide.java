@@ -37,24 +37,6 @@ class Utils {
         return false;
     }
 
-    static void clearTerminal() {
-        try {
-            String os = System.getProperty("os.name").toLowerCase();
-            if (os.contains("win")) {
-                new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
-            } else {
-                new ProcessBuilder("clear").inheritIO().start().waitFor();
-            }
-        } catch (Exception e) {
-            System.out.println("Gagal Clear Terminal!");
-        }
-    }
-
-    static void lanjut() {
-        System.out.print("Tekan ENTER untuk lanjut...");
-        input.nextLine();
-    }
-
     static String normalisasiDaerah(String provinsiInput) {
         String s = provinsiInput.toLowerCase().trim();
         if (wilayah(s, "banten")) 
@@ -71,7 +53,7 @@ class Utils {
             return "Jawa Tengah";
         if (wilayah(s, "kalimantan selatan", "kalimantan utara", "kalimantan barat", "kalimantan timur", "kalimantan tengah")) 
             return "Kalimantan";
-        if (wilayah(s, "sumatera barat", "sumatera utara", "sumatera selatan", "riau", "aceh", "lampung")) 
+        if (wilayah(s, "sumatera barat", "sumatera utara", "sumatera selatan", "riau", "aceh", "lampung", "bengkulu", "kepulauan riau", "jambi")) 
             return "Sumatera";
         if (wilayah(s, "sulawesi selatan", "sulawesi utara", "sulawesi tengah", "sulawesi tenggara", "sulawesi barat")) 
             return "Sulawesi";
@@ -87,6 +69,24 @@ class Utils {
             return "Maluku";
         return "Wilayah Tidak Dikenal";
     }
+
+        static void clearTerminal() {
+        try {
+            String os = System.getProperty("os.name").toLowerCase();
+            if (os.contains("win")) {
+                new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
+            } else {
+                new ProcessBuilder("clear").inheritIO().start().waitFor();
+            }
+        } catch (Exception e) {
+            System.out.println("Gagal Clear Terminal!");
+        }
+    }
+
+    static void lanjut() {
+        System.out.print("Tekan ENTER untuk lanjut...");
+        input.nextLine();
+    }
 }
 
 class SocialGraph {
@@ -97,9 +97,10 @@ class SocialGraph {
 
     private static final double batas = 0.25;
     SocialGraph() {
-        database      = new HashMap<>();
+        database = new HashMap<>();
         adjacencyList = new HashMap<>();
     }
+
     void tambahMahasiswa(Mahasiswa mhs) {
         database.put(mhs.nim, mhs);
         adjacencyList.put(mhs.nim, new ArrayList<>());
@@ -140,7 +141,7 @@ class SocialGraph {
         HashSet<String> sudahDikunjungi = new HashSet<>();
         antrian.add(nimUser);
         sudahDikunjungi.add(nimUser);
-        int level    = 0;
+        int level = 0;
         int maxLevel = 2;
         while (!antrian.isEmpty() && level < maxLevel) {
             int ukuranLevel = antrian.size();
@@ -151,10 +152,10 @@ class SocialGraph {
                     if (sudahDikunjungi.contains(nimTetangga)) continue;
                     sudahDikunjungi.add(nimTetangga);
                     antrian.add(nimTetangga);
-                    Mahasiswa user     = database.get(nimUser);
+                    Mahasiswa user = database.get(nimUser);
                     Mahasiswa kandidat = database.get(nimTetangga);
-                    double skor        = hitungSimilarity(user, kandidat);
-                    String alasan      = buatAlasan(user, kandidat, level);
+                    double skor = hitungSimilarity(user, kandidat);
+                    String alasan = buatAlasan(user, kandidat, level);
                     hasil.add(new String[]{ nimTetangga, alasan, String.valueOf(skor) });
                 }
             }
@@ -220,10 +221,10 @@ class SocialGraph {
 class PaguyubanManager {
     private HashMap<String, ArrayList<String>> grupPaguyuban;
     private HashMap<String, String> ketuaPaguyuban;
-    private HashMap<String, Mahasiswa> database; // referensi ke database SocialGraph
+    private HashMap<String, Mahasiswa> database;
     PaguyubanManager(HashMap<String, Mahasiswa> database) {
-        this.database       = database;
-        this.grupPaguyuban  = new HashMap<>();
+        this.database = database;
+        this.grupPaguyuban = new HashMap<>();
         this.ketuaPaguyuban = new HashMap<>();
     }
 
@@ -317,22 +318,24 @@ public class UNSMabaGuide {
         boolean jalan = true;
         while (jalan) {
             tampilMenu();
-            switch (bacaInt("Pilihan kamu : ")) {
-                case 1: 
+            System.out.print("Pilihan kamu : ");
+            String input_user = input.nextLine();
+            switch (input_user) {
+                case "1": 
                     menuDaftar();
                     break;
-                case 2: 
+                case "2": 
                     menuCariTeman();
                     break;
-                case 3: 
+                case "3": 
                     paguyuban.tampilkanSemuaPaguyuban();
                     break;
-                case 0:
+                case "0":
                     jalan = false;
                     System.out.println("\nTerima kasih! Semangat beradaptasi di UNS!\n");
                     break;
                 default:
-                    System.out.println("\nPilihan tidak valid (1-5).\n");
+                    continue;
             }
         }
         input.close();
@@ -424,6 +427,7 @@ public class UNSMabaGuide {
         Mahasiswa mhs = new Mahasiswa(nim, nama, asal, hobi, kost);
         graph.tambahMahasiswa(mhs);
         paguyuban.tambahKePaguyuban(mhs);
+        simpanKeCSV(nim, nama, asal, kost, hobi);
         System.out.println("\nSelamat Datang di UNS, " + nama);
         tampilRekomendasi(nim);
         paguyuban.tampilkanInfoPaguyuban(nim);
@@ -510,10 +514,32 @@ public class UNSMabaGuide {
         paguyuban.tambahKePaguyuban(m);
     }
 
-    static int bacaInt(String prompt) {
-        System.out.print(prompt);
-        try { return Integer.parseInt(input.nextLine().trim()); }
-        catch (NumberFormatException e) { return -1; }
+    static void simpanKeCSV(String nim, String nama, String asal, String kost, ArrayList<String> hobi) {
+        String namaFile = "SDA_PROJECT/DataMahasiswa.csv";
+        try {
+            java.io.File file = new java.io.File(namaFile);
+            boolean fileAdaIsinya = file.exists() && file.length() > 0;
+            java.io.FileWriter fw = new java.io.FileWriter(file, true);
+            java.io.BufferedWriter bw = new java.io.BufferedWriter(fw);
+            java.io.PrintWriter out = new java.io.PrintWriter(bw);
+            
+            StringBuilder hobiStr = new StringBuilder();
+            for (int i = 0; i < hobi.size(); i++) {
+                hobiStr.append(hobi.get(i));
+                if (i < hobi.size() - 1) hobiStr.append(",");
+            }
+            String dataBaru = nim + "," + nama + "," + asal + "," + kost + "," + hobiStr.toString();
+            if (fileAdaIsinya) {
+                out.print("\n" + dataBaru);
+            } else {
+                out.print(dataBaru);
+            }
+            out.close();
+            bw.close();
+            fw.close();
+        } catch (java.io.IOException e) {
+            System.out.println("Gagal Menyimpan Data");
+        }
     }
 
     static void garis(char c, int n) {
