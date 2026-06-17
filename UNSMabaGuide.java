@@ -476,7 +476,7 @@ public class UNSMabaGuide {
     }
 
     static void muatSeedData() {
-        String namaFile = "SDA_PROJECT/DataMahasiswa.csv";
+        String namaFile = "UNS_MABA_GUIDE/DataMahasiswa.csv";
         try {
             java.io.File file = new java.io.File(namaFile);
             Scanner fileScanner = new Scanner(file);
